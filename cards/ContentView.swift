@@ -41,18 +41,21 @@ struct DraggableCard: View {
     
     @State private var offset: CGSize = .zero
     @State private var isLocked: Bool = false
-    @State private var stackIndex: Int = 0   // this card's position in the pile
+    @State private var stackIndex: Int = 0
     @State private var cardCenterAtDragStart: CGPoint = .zero
     @State private var fingerOffsetFromCenter: CGSize = .zero
     @State private var hasRecordedStart: Bool = false
     
+    // Tweak this to control how tall the pile looks
+    private let stackSpacing: CGFloat = 8
+    
     var body: some View {
         CardUIView(cardColor: .green)
             .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.black.opacity(0.3), lineWidth: 1)
-                )
-                .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.black.opacity(0.3), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.4), radius: 3, x: 0, y: 3)
             .background(
                 GeometryReader { geo -> Color in
                     let frame = geo.frame(in: .global)
@@ -65,6 +68,7 @@ struct DraggableCard: View {
                 }
             )
             .offset(offset)
+            .zIndex(isLocked ? Double(stackIndex) : 100)  // dragging card on top; once locked, higher stackIndex = higher layer
             .gesture(
                 DragGesture(coordinateSpace: .global)
                     .onChanged { value in
@@ -87,12 +91,15 @@ struct DraggableCard: View {
                         )
                         
                         if slotFrame.contains(cardCenterNow) {
-                            // Claim a stack position
-                            stackIndex = droppedCount
+                            // Claim a position in the pile
+                            let myIndex = droppedCount
+                            stackIndex = myIndex
                             droppedCount += 1
                             
-                            // Each card sits 2pt higher than the one below
-                            let stackLift = CGFloat(stackIndex) * 20   // try 20 instead of 2
+                            // Each card sits visibly above the previous one
+                            let stackLift = CGFloat(myIndex) * stackSpacing
+                            
+                            print("Card dropped! stackIndex=\(myIndex), lift=\(stackLift)")
                             
                             withAnimation(.spring()) {
                                 offset = CGSize(
