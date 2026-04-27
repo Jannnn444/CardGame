@@ -12,6 +12,7 @@
 		1EC38ECE2F9F3EAD00C70218 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1EC38ECD2F9F3EAD00C70218 /* Assets.xcassets */; };
 		1EC38ED12F9F3EAD00C70218 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1EC38ED02F9F3EAD00C70218 /* Preview Assets.xcassets */; };
 		1EC38ED82F9F40EC00C70218 /* CardUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC38ED72F9F40EC00C70218 /* CardUIView.swift */; };
+		1EC38EDA2F9F453200C70218 /* EmptyCardSlot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EC38ED92F9F453200C70218 /* EmptyCardSlot.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,6 +22,7 @@
 		1EC38ECD2F9F3EAD00C70218 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1EC38ED02F9F3EAD00C70218 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1EC38ED72F9F40EC00C70218 /* CardUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardUIView.swift; sourceTree = "<group>"; };
+		1EC38ED92F9F453200C70218 /* EmptyCardSlot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyCardSlot.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,9 +57,9 @@
 			children = (
 				1EC38EC92F9F3EAC00C70218 /* cardsApp.swift */,
 				1EC38ECB2F9F3EAC00C70218 /* ContentView.swift */,
-				1EC38ECD2F9F3EAD00C70218 /* Assets.xcassets */,
-				1EC38ECF2F9F3EAD00C70218 /* Preview Content */,
 				1EC38ED72F9F40EC00C70218 /* CardUIView.swift */,
+				1EC38ED92F9F453200C70218 /* EmptyCardSlot.swift */,
+				1EC38ECF2F9F3EAD00C70218 /* Preview Content */,
 			);
 			path = cards;
 			sourceTree = "<group>";
@@ -65,6 +67,7 @@
 		1EC38ECF2F9F3EAD00C70218 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
+				1EC38ECD2F9F3EAD00C70218 /* Assets.xcassets */,
 				1EC38ED02F9F3EAD00C70218 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
@@ -141,6 +144,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1EC38ED82F9F40EC00C70218 /* CardUIView.swift in Sources */,
+				1EC38EDA2F9F453200C70218 /* EmptyCardSlot.swift in Sources */,
 				1EC38ECC2F9F3EAC00C70218 /* ContentView.swift in Sources */,
 				1EC38ECA2F9F3EAC00C70218 /* cardsApp.swift in Sources */,
 			);
@@ -276,7 +280,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"cards/Preview Content\"";
-				DEVELOPMENT_TEAM = AYJ7NCRT9Q;
+				DEVELOPMENT_TEAM = 362GN5DA84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -305,7 +309,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"cards/Preview Content\"";
-				DEVELOPMENT_TEAM = AYJ7NCRT9Q;
+				DEVELOPMENT_TEAM = 362GN5DA84;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
