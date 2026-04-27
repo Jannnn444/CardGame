@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var slotFrame: CGRect = .zero
+    @State private var droppedCount: Int = 0
     
     var body: some View {
         VStack {
@@ -24,9 +25,9 @@ struct ContentView: View {
             
             // MARK: - Card Decks
             HStack {
-                DraggableCard(slotFrame: slotFrame)
-                DraggableCard(slotFrame: slotFrame)
-                DraggableCard(slotFrame: slotFrame)
+                DraggableCard(slotFrame: slotFrame, droppedCount: $droppedCount)
+                DraggableCard(slotFrame: slotFrame, droppedCount: $droppedCount)
+                DraggableCard(slotFrame: slotFrame, droppedCount: $droppedCount)
             }
             .padding()
         }
@@ -36,18 +37,24 @@ struct ContentView: View {
 
 struct DraggableCard: View {
     let slotFrame: CGRect
+    @Binding var droppedCount: Int
     
     @State private var offset: CGSize = .zero
     @State private var isLocked: Bool = false
+    @State private var stackIndex: Int = 0   // this card's position in the pile
     @State private var cardCenterAtDragStart: CGPoint = .zero
     @State private var fingerOffsetFromCenter: CGSize = .zero
     @State private var hasRecordedStart: Bool = false
     
     var body: some View {
-        CardUIView(cardColor: .yellow)
+        CardUIView(cardColor: .green)
+            .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.black.opacity(0.3), lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.3), radius: 2, x: 0, y: 2)
             .background(
                 GeometryReader { geo -> Color in
-                    // Continuously track card's center in global space (only matters before drag)
                     let frame = geo.frame(in: .global)
                     DispatchQueue.main.async {
                         if !hasRecordedStart && offset == .zero {
@@ -62,9 +69,6 @@ struct DraggableCard: View {
                 DragGesture(coordinateSpace: .global)
                     .onChanged { value in
                         guard !isLocked else { return }
-                        
-                        // On the first frame of the drag, record where the finger
-                        // is relative to the card's center.
                         if !hasRecordedStart {
                             fingerOffsetFromCenter = CGSize(
                                 width: value.startLocation.x - cardCenterAtDragStart.x,
@@ -72,24 +76,28 @@ struct DraggableCard: View {
                             )
                             hasRecordedStart = true
                         }
-                        
                         offset = value.translation
                     }
                     .onEnded { value in
                         guard !isLocked else { return }
                         
-                        // Where the card's center actually is right now
                         let cardCenterNow = CGPoint(
                             x: value.location.x - fingerOffsetFromCenter.width,
                             y: value.location.y - fingerOffsetFromCenter.height
                         )
                         
                         if slotFrame.contains(cardCenterNow) {
+                            // Claim a stack position
+                            stackIndex = droppedCount
+                            droppedCount += 1
+                            
+                            // Each card sits 2pt higher than the one below
+                            let stackLift = CGFloat(stackIndex) * 20   // try 20 instead of 2
+                            
                             withAnimation(.spring()) {
-                                // Snap so the card's center lands on the slot's center
                                 offset = CGSize(
                                     width: offset.width + (slotFrame.midX - cardCenterNow.x),
-                                    height: offset.height + (slotFrame.midY - cardCenterNow.y)
+                                    height: offset.height + (slotFrame.midY - cardCenterNow.y) - stackLift
                                 )
                                 isLocked = true
                             }
@@ -100,13 +108,6 @@ struct DraggableCard: View {
                         }
                         
                         hasRecordedStart = false
-                        /*
-                         NOTE:
-                         1. [V] set the drop more correct
-                         2. [ ] game topic for drop items, like how to sort the house?
-                         3. [ ] how to make score 
-                         4. [ ] bacground color
-                         */
                     }
             )
     }
