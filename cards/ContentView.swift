@@ -39,34 +39,74 @@ struct DraggableCard: View {
     
     @State private var offset: CGSize = .zero
     @State private var isLocked: Bool = false
+    @State private var cardCenterAtDragStart: CGPoint = .zero
+    @State private var fingerOffsetFromCenter: CGSize = .zero
+    @State private var hasRecordedStart: Bool = false
     
     var body: some View {
         CardUIView(cardColor: .yellow)
+            .background(
+                GeometryReader { geo -> Color in
+                    // Continuously track card's center in global space (only matters before drag)
+                    let frame = geo.frame(in: .global)
+                    DispatchQueue.main.async {
+                        if !hasRecordedStart && offset == .zero {
+                            cardCenterAtDragStart = CGPoint(x: frame.midX, y: frame.midY)
+                        }
+                    }
+                    return Color.clear
+                }
+            )
             .offset(offset)
             .gesture(
                 DragGesture(coordinateSpace: .global)
                     .onChanged { value in
                         guard !isLocked else { return }
+                        
+                        // On the first frame of the drag, record where the finger
+                        // is relative to the card's center.
+                        if !hasRecordedStart {
+                            fingerOffsetFromCenter = CGSize(
+                                width: value.startLocation.x - cardCenterAtDragStart.x,
+                                height: value.startLocation.y - cardCenterAtDragStart.y
+                            )
+                            hasRecordedStart = true
+                        }
+                        
                         offset = value.translation
                     }
                     .onEnded { value in
                         guard !isLocked else { return }
-                        // Check if drop point is inside the pink slot
-                        if slotFrame.contains(value.location) {
+                        
+                        // Where the card's center actually is right now
+                        let cardCenterNow = CGPoint(
+                            x: value.location.x - fingerOffsetFromCenter.width,
+                            y: value.location.y - fingerOffsetFromCenter.height
+                        )
+                        
+                        if slotFrame.contains(cardCenterNow) {
                             withAnimation(.spring()) {
-                                // Snap into the slot
+                                // Snap so the card's center lands on the slot's center
                                 offset = CGSize(
-                                    width: offset.width + (slotFrame.midX - value.location.x),
-                                    height: offset.height + (slotFrame.midY - value.location.y)
+                                    width: offset.width + (slotFrame.midX - cardCenterNow.x),
+                                    height: offset.height + (slotFrame.midY - cardCenterNow.y)
                                 )
                                 isLocked = true
                             }
                         } else {
-                            // Snap back
                             withAnimation(.spring()) {
                                 offset = .zero
                             }
                         }
+                        
+                        hasRecordedStart = false
+                        /*
+                         NOTE:
+                         1. [V] set the drop more correct
+                         2. [ ] game topic for drop items, like how to sort the house?
+                         3. [ ] how to make score 
+                         4. [ ] bacground color
+                         */
                     }
             )
     }
